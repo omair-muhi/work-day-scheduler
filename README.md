@@ -13,7 +13,7 @@ A web-based calendar application that allows the user to create events for each 
 ## Usage 
 
 Access web-page here: (https://omair-muhi.github.io/code-quiz/)
-![Word Day Scheduler startup screen!](./assets/images/main-screen.png)
+![Word Day Scheduler startup screen!](./images/main-screen.png)
 
 ## Credits
 * UoT FSF Bcamp - this template
