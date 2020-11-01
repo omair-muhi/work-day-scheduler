@@ -3,23 +3,24 @@
 ## Description 
 A web-based calendar application that allows the user to create events for each hour of the day.
 
-## Table of Contents (Optional)
+## Table of Contents
 
 * [Usage](#usage)
+* [Screenshot](#screenshot)
 * [Credits](#credits)
 * [License](#license)
-* [Tests](#tests)
+* [Test Cases](#tests)
 
 ## Usage 
+Access web-page here: (https://omair-muhi.github.io/work-day-scheduler/)
 
-Access web-page here: (https://omair-muhi.github.io/code-quiz/)
+## Screenshot
 ![Word Day Scheduler startup screen!](./images/main-screen.png)
 
 ## Credits
 * UoT FSF Bcamp - this template
 
 ## License
-
 MIT License
 
 ## Test Cases
