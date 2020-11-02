@@ -6,35 +6,37 @@ function refreshTimeBlockColors() {
     // Colour code based on current time
     var currentHour = parseInt(moment().format('H'));
     var calendarBegin = parseInt($("input:first").attr("id"));
-    var calendarEnd =
-        if (currentHour < calendarBegin) {
-            // color all time-blocks as green
-            $("input").addClass("bg-success");
-            return;
-        } else
-    if (currentHour >= parseInt($("input:last").attr("id"))) {
-        // color all time-blocks as gray and inactive
+    var calendarEnd = parseInt($("input:last").attr("id"));
+    if (currentHour < calendarBegin) {
+        // color all time-blocks as green
+        $("input").addClass("bg-success");
+        return;
+    } else if (currentHour > calendarEnd + 1) {
+        // disable all time-blocks
         $("input").attr("disabled", "1");
         return;
     }
     var inputTagArray = $("input");
     var numTimeBlocks = inputTagArray.length;
-    console.log($(inputTagArray[0]).attr("id"));
-    console.log($(inputTagArray[1]).attr("id"));
-    console.log($(inputTagArray[2]).attr("id"));
-    for (var i = 0; i < numTimeBlocks - 1; i++) {
+    for (var i = 0; i < numTimeBlocks; i++) {
         var currentTimeBlockBegin = parseInt($(inputTagArray[i]).attr("id"));
-        var currentTimeBlockEnd = parseInt($(inputTagArray[i + 1]).attr("id"));
-        if (currentHour >= currentTimeBlockBegin && currentHour < currentTimeBlockEnd) {
+        var currentTimeBlockEnd;
+        if (i < numTimeBlocks - 1) {
+            currentTimeBlockEnd = parseInt($(inputTagArray[i + 1]).attr("id"));
+        } else {
+            currentTimeBlockEnd = 18; // hard-coded
+        }
+        if ((currentHour >= currentTimeBlockBegin) && (currentHour < currentTimeBlockEnd)) {
             // Set background colour to red
             $(inputTagArray[i]).addClass("bg-danger");
         } else if (currentHour < currentTimeBlockBegin) {
             // Set background colour to green
             $(inputTagArray[i]).addClass("bg-success");
-        } else if (currentHour > currentTimeBlockEnd) {
+        } else if (currentHour > currentTimeBlockBegin) {
             $(inputTagArray[i]).attr("disabled", "1");
         }
     }
+
 }
 
 function initApplication() {
