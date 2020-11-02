@@ -1,7 +1,3 @@
-function getTimeFromInputNode(inputNode) {
-    return inputNode.getAttribute("id");
-}
-
 function refreshTimeBlockColors() {
     // Colour code based on current time
     var currentHour = parseInt(moment().format('H'));
