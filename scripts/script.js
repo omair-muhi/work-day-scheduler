@@ -1,24 +1,41 @@
+// keep track of current hour as report by Moment.js
+var currentHour = parseInt(moment().format('H'));
+/**
+ * Function: saveBtnHandler
+ * Description: Handle click events from all save buttons
+ * @param {*} event 
+ */
 function saveBtnHandler(event) {
-    // 1. Get the text and id of the event
-    var timeBlockEventText = $(event.target).parent().prev().val();
-    var timeBlockId = parseInt($(event.target).parent().prev().attr("id") - 9);
-    // 2. Read localDB
-    var calendarEvtsLclDb = JSON.parse(localStorage.getItem("calendarEvents"));
-    if (calendarEvtsLclDb !== null) {
-        calendarEvents = calendarEvtsLclDb;
+    // get the time-block whose save button was clicked
+    var currentTimeBlock = parseInt($(event.target).parent().prev().attr("id"));
+    // Disabled any save buttons as needed
+    if (currentHour > currentTimeBlock) {
+        console.log("This time-block is in the past!");
+        event.preventDefault();
+    } else {
+        // 1. Get the text and id of the event
+        var timeBlockEventText = $(event.target).parent().prev().val();
+        var timeBlockId = currentTimeBlock - 9;
+        if (timeBlockEventText !== null && timeBlockEventText !== "") {
+            // 2. Read localDB
+            var calendarEvtsLclDb = JSON.parse(localStorage.getItem("calendarEvents"));
+            if (calendarEvtsLclDb !== null) {
+                calendarEvents = calendarEvtsLclDb;
+            }
+            // 3. Modify contents
+            calendarEvents.timeBlocksArray[timeBlockId].push(timeBlockEventText);
+            // 4. Write back to localDb
+            localStorage.setItem("calendarEvents", JSON.stringify(calendarEvents));
+        }
     }
-    // 3. Modify contents
-    calendarEvents.timeBlocksArray[timeBlockId].push(timeBlockEventText);
-    // 4. Write back to localDb
-    localStorage.setItem("calendarEvents", JSON.stringify(calendarEvents));
 }
 /**
- * This function updates the time-blocks based on current time
- * (runs upon browser refresh)
+ * Function: refreshTimeBlockColors
+ * Description: Color code time-blocks based on hour
+ *              reported by Moment.js
  */
 function refreshTimeBlockColors() {
     // Colour code based on current time
-    var currentHour = parseInt(moment().format('H'));
     var calendarBegin = parseInt($("input:first").attr("id"));
     var calendarEnd = parseInt($("input:last").attr("id"));
     if (currentHour < calendarBegin) {
@@ -47,11 +64,13 @@ function refreshTimeBlockColors() {
             // Set background colour to green
             $(inputTagArray[i]).addClass("bg-success");
         } else if (currentHour > currentTimeBlockBegin) {
+            // Disable this time-block
             $(inputTagArray[i]).attr("disabled", "1");
         }
     }
 
 }
+// local data-structure to hold calendarEvent strings
 var calendarEvents = {
     timeBlocksArray: [
         [], // 0900
@@ -66,6 +85,11 @@ var calendarEvents = {
     ]
 }
 
+/**
+ * Function: loadEventsFromLocalDb
+ * Description: Updates all input fields with _most recent_
+ *              event that was added
+ */
 function loadEventsFromLocalDb() {
     var calendarEvtsLclDb = JSON.parse(localStorage.getItem("calendarEvents"));
     if (calendarEvtsLclDb !== null) {
@@ -82,7 +106,10 @@ function loadEventsFromLocalDb() {
         }
     }
 }
-
+/**
+ * Function: initApplication
+ * Description: Entry-point for the calendar application
+ */
 function initApplication() {
     // Display today's date at top
     var currentMoment = moment().format("dddd, MMMM Do");
@@ -95,5 +122,5 @@ function initApplication() {
     $("input").val("");
     loadEventsFromLocalDb();
 }
-
+// jQuery entry-point
 $(document).ready(initApplication);
