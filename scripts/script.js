@@ -1,7 +1,5 @@
 function saveBtnHandler(event) {
     // 1. Get the text and id of the event
-    // console.log(event.target);
-    // console.log($(event.target).parent().prev().val());
     var timeBlockEventText = $(event.target).parent().prev().val();
     var timeBlockId = parseInt($(event.target).parent().prev().attr("id") - 9);
     // 2. Read localDB
@@ -13,15 +11,14 @@ function saveBtnHandler(event) {
     calendarEvents.timeBlocksArray[timeBlockId].push(timeBlockEventText);
     // 4. Write back to localDb
     localStorage.setItem("calendarEvents", JSON.stringify(calendarEvents));
-    // console.log("Text:" + timeBlockEventText);
-    // console.log("Button #" + timeBlockId);
-    // localStorage.setItem("calendarEvents", JSON.stringify(calendarEvents));
 }
-
+/**
+ * This function updates the time-blocks based on current time
+ * (runs upon browser refresh)
+ */
 function refreshTimeBlockColors() {
     // Colour code based on current time
-    // var currentHour = parseInt(moment().format('H'));
-    var currentHour = 10;
+    var currentHour = parseInt(moment().format('H'));
     var calendarBegin = parseInt($("input:first").attr("id"));
     var calendarEnd = parseInt($("input:last").attr("id"));
     if (currentHour < calendarBegin) {
@@ -71,8 +68,19 @@ var calendarEvents = {
 
 function loadEventsFromLocalDb() {
     var calendarEvtsLclDb = JSON.parse(localStorage.getItem("calendarEvents"));
-    if (calendarEvtsLclDb !== null)
+    if (calendarEvtsLclDb !== null) {
+        // 1. Read from localDb
         calendarEvents = calendarEvtsLclDb;
+        // 2. Loop through events
+        var numTimeBlocks = calendarEvents.timeBlocksArray.length;
+        for (var i = 0; i < numTimeBlocks; i++) {
+            // 2.1 Pick an event in LIFO order from each time-block
+            var eventString = calendarEvents.timeBlocksArray[i].pop();
+            // 2.2 Update corresponding time-block on calendar
+            var currentTimeBlock = i + 9;
+            $("#" + currentTimeBlock + ".form-control").val(eventString);
+        }
+    }
 }
 
 function initApplication() {
@@ -80,8 +88,12 @@ function initApplication() {
     var currentMoment = moment().format("dddd, MMMM Do");
     $("#currentDay").text(currentMoment);
     $("button").click(saveBtnHandler);
+    // initialize colors for time-blocks
     refreshTimeBlockColors();
-    // loadEventsFromLocalDb();
+    // clear and re-initialize time-block text
+    $("input").attr("placeholder", "Create an event...");
+    $("input").val("");
+    loadEventsFromLocalDb();
 }
 
 $(document).ready(initApplication);
